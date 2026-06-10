@@ -1,82 +1,40 @@
 # Batalha Naval
 
-Uma implementação clássica e robusta de **Batalha Naval** em Python para rodar diretamente no terminal. Este projeto foi totalmente atualizado para atender de forma estrita às especificações acadêmicas da disciplina de Raciocínio Algorítmico da PUCPR.
+Implementação do jogo Batalha Naval em Python (terminal), desenvolvida como atividade somativa da disciplina de Raciocínio Algorítmico — PUCPR.
+
+**Equipe:** Guilherme Bettio e Gabriel Kulik
 
 ---
 
-## 👥 Desenvolvedores
-* **Guilherme Bettio**
-* **Gabriel Kulik**
+## Como executar
 
----
-
-## 🎮 Modos de Jogo
-
-O jogo é disputado no formato **Humano vs Computador**, oferecendo duas modalidades distintas que podem ser selecionadas a partir do menu principal:
-
-### 1. Batalha Naval Simplificado
-* **Tabuleiros**: Tamanho ajustável de `5x10` (padrão recomendado) ou `10x10`.
-* **Embarcações**: Cada jogador possui exatamente 5 embarcações de tamanho 1 (ocupando um único espaço da matriz).
-* **Posicionamento**:
-  * **Jogador**: Informa manualmente a linha e coluna (coordenadas baseadas em 1) para posicionar cada uma de suas 5 embarcações.
-  * **Computador**: Posiciona suas 5 embarcações de maneira totalmente aleatória.
-* **Turnos**: Alternados de forma simples.
-
-### 2. Batalha Naval Original (Modo Desafio)
-* **Tabuleiros**: Tamanho ajustável de `5x10` ou `10x10`.
-* **Embarcações**: Frota tradicional com 5 embarcações de múltiplos tamanhos:
-  * **Porta-aviões**: ocupa 5 posições.
-  * **Navio-tanque**: ocupa 4 posições.
-  * **Contratorpedeiro**: ocupa 3 posições.
-  * **Submarino**: ocupa 2 posições.
-  * **Destroier**: ocupa 1 posição.
-* **Posicionamento**:
-  * **Jogador**: Posiciona manualmente cada navio informando a coordenada inicial (linha e coluna) e a direção desejada (`H` para Horizontal ou `V` para Vertical).
-  * **Computador**: Posiciona a frota inteira de forma aleatória nas direções horizontal ou vertical.
-  * *Validações de limites e sobreposição de navios impedem posicionamentos ilegais.*
-* **Mecânica de Dano**: Um navio de tamanho maior só é considerado **afundado** quando todas as suas coordenadas forem atingidas.
-* **Regra de Turno Extra**: Ao conseguir afundar totalmente uma das embarcações inimigas, o jogador (ou computador) ganha o direito de realizar um **ataque extra** no mesmo turno.
-
----
-
-## 🖥️ Interface Visual do Tabuleiro
-
-Conforme especificado nas orientações de design, os tabuleiros não revelam os barcos ocultos. Eles exibem apenas o feedback visual de ataques no console em formato de listas de Python, facilitando a leitura de coordenadas:
-* `0`: Célula desconhecida (água sem ataques).
-* `'O'`: Tiro realizado que atingiu a água (erro).
-* `'X'`: Tiro realizado que atingiu um navio (acerto).
-
-**Exemplo de Exibição:**
-```text
-Tabuleiro do Computador
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-['X', 0, 0, 'O', 0, 0, 0, 0, 0, 0]
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-------------------------------
-Embarcações restantes: 4
+```bash
+python batalhaNaval.py
 ```
 
----
-
-## 🚀 Como Executar
-
-### Pré-requisitos
-* Ter o **Python 3.x** instalado.
-* Não há dependências de bibliotecas de terceiros (usa bibliotecas padrão do Python: `random`, `os`, `time`).
-
-### Passo a Passo
-1. Abra seu terminal ou prompt de comando na pasta do projeto.
-2. Execute o jogo usando:
-   ```bash
-   python batalhaNaval.py
-   ```
-3. Utilize as opções numéricas apresentadas no menu para navegar e jogar.
+> Requer Python 3.x. Sem dependências externas.
 
 ---
 
-## 🛠️ Validações Integradas no Código
-* **Tratamento de Exceções**: O jogo não quebra se você digitar letras ou símbolos inválidos nas coordenadas ou no menu; ele exibe uma mensagem instrutiva e solicita o dado novamente.
-* **Tiros Repetidos**: O jogo detecta se o jogador já tentou atirar em uma célula anteriormente e solicita uma nova coordenada.
-* **Limites do Mapa**: Navios posicionados manualmente ou tiros disparados fora dos limites do tabuleiro (como linha 6 em um tabuleiro 5x10) são interceptados e impedidos pelas regras de validação.
+## Requisitos atendidos
+
+| # | Requisito | Nota |
+|---|-----------|------|
+| 1 | Respeita as regras do jogo (modo Humano vs Computador, tabuleiro oculto, turnos alternados) | 2,0 |
+| 2 | Funciona do início ao fim sem quebrar, com tratamento de entradas inválidas | 3,0 |
+| 3 | Código modularizado em funções | 1,5 |
+| 4 | Tabuleiros implementados com matrizes | 1,0 |
+| 5 | Mínimo de 5 embarcações por tabuleiro | 0,5 |
+| 6 | Feedback correto ao jogador (acerto, erro, embarcações restantes) | 2,0 |
+| 7 | **Desafio:** Modo original com Porta-aviões (5), Navio-tanque (4), Contratorpedeiro (3), Submarino (2) e Destroier (1) — navio só afunda quando todas as posições são atingidas, e o jogador ataca novamente ao afundar | +3,3 |
+
+---
+
+## Funcionalidades
+
+- **Menu principal** com dois modos de jogo e escolha de tamanho (5x10 ou 10x10)
+- **Modo Simplificado:** 5 embarcações de 1 posição; jogador posiciona manualmente, computador posiciona aleatoriamente
+- **Modo Desafio:** frota clássica com tamanhos variados; posicionamento com direção (H/V); turno extra ao afundar navio
+- **Dois tabuleiros por jogador:** um interno (com posições dos navios) e um de feedback (exibido no console, preenchido com `0`, `X` e `O`)
+- **Validações:** coordenadas fora do limite, tiro repetido, sobreposição de navios no posicionamento
+- **Encerramento:** exibe nome dos integrantes e mensagem de agradecimento
