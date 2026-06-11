@@ -49,6 +49,25 @@ def pedir_coordenada_tiro(linhas, colunas, tabuleiro_feedback):
         except ValueError:
             print("Entrada inválida. Digite valores inteiros.")
 
+def pedir_coordenada_tiro_nomeado(jogador, linhas, colunas, tabuleiro_feedback):
+    while True:
+        try:
+            linha = int(input(f"{jogador}: Qual linha deseja atacar? "))
+            coluna = int(input(f"{jogador}: Qual coluna deseja atacar? "))
+            
+            if not (1 <= linha <= linhas and 1 <= coluna <= colunas):
+                print(f"Coordenadas inválidas! Escolha linha de 1 a {linhas} e coluna de 1 a {colunas}.")
+                continue
+                
+            r, c = linha - 1, coluna - 1
+            if tabuleiro_feedback[r][c] in ('X', 'O'):
+                print("Você já atacou essa posição! Escolha outra.")
+                continue
+                
+            return r, c
+        except ValueError:
+            print("Entrada inválida. Digite valores inteiros.")
+
 def computador_escolhe_tiro(linhas, colunas, tabuleiro_feedback):
     while True:
         r = random.randint(0, linhas - 1)
@@ -361,12 +380,195 @@ def jogo_desafio(linhas, colunas):
                 input("Pressione Enter para iniciar seu turno...")
                 limpar_tela()
 
+def jogo_simplificado_vs_jogador(linhas, colunas):
+    print("\n--- POSICIONAMENTO JOGADOR 1 ---")
+    tabuleiro_pos_jogador1 = posicionar_jogador_simplificado(linhas, colunas)
+    
+    input("\nPressione Enter e passe o controle para o Jogador 2...")
+    limpar_tela()
+    
+    print("\n--- POSICIONAMENTO JOGADOR 2 ---")
+    tabuleiro_pos_jogador2 = posicionar_jogador_simplificado(linhas, colunas)
+    
+    tabuleiro_fb_jogador1 = criar_tabuleiro(linhas, colunas)
+    tabuleiro_fb_jogador2 = criar_tabuleiro(linhas, colunas)
+    
+    embarcacoes_jogador1 = 5
+    embarcacoes_jogador2 = 5
+    
+    limpar_tela()
+    print("Bem vindo ao Batalha Naval (Jogador vs Jogador)!")
+    
+    turno_jogador1 = True
+    
+    while True:
+        if turno_jogador1:
+            # Turno do Jogador 1
+            exibir_tabuleiro(tabuleiro_fb_jogador2, "Tabuleiro do Jogador 2", embarcacoes_jogador2)
+            exibir_tabuleiro(tabuleiro_fb_jogador1, "Seu Tabuleiro (Jogador 1)", embarcacoes_jogador1)
+            
+            r, c = pedir_coordenada_tiro_nomeado("Jogador 1", linhas, colunas, tabuleiro_fb_jogador2)
+            
+            if tabuleiro_pos_jogador2[r][c] == 1:
+                tabuleiro_fb_jogador2[r][c] = 'X'
+                embarcacoes_jogador2 -= 1
+                print(f"\nParabéns! Você acertou! Restam {embarcacoes_jogador2} embarcações inimigas.\n")
+            else:
+                tabuleiro_fb_jogador2[r][c] = 'O'
+                print("\nNão houve acerto em nenhuma embarcação inimiga.\n")
+                
+            if embarcacoes_jogador2 == 0:
+                exibir_tabuleiro(tabuleiro_fb_jogador2, "Tabuleiro do Jogador 2", embarcacoes_jogador2)
+                exibir_tabuleiro(tabuleiro_fb_jogador1, "Tabuleiro do Jogador 1", embarcacoes_jogador1)
+                exibir_fim_jogo("Parabéns Jogador 1! Você afundou todas as embarcações do adversário!")
+                break
+                
+            turno_jogador1 = False
+            input("Pressione Enter para passar a vez ao Jogador 2...")
+            limpar_tela()
+        else:
+            # Turno do Jogador 2
+            exibir_tabuleiro(tabuleiro_fb_jogador1, "Tabuleiro do Jogador 1", embarcacoes_jogador1)
+            exibir_tabuleiro(tabuleiro_fb_jogador2, "Seu Tabuleiro (Jogador 2)", embarcacoes_jogador2)
+            
+            r, c = pedir_coordenada_tiro_nomeado("Jogador 2", linhas, colunas, tabuleiro_fb_jogador1)
+            
+            if tabuleiro_pos_jogador1[r][c] == 1:
+                tabuleiro_fb_jogador1[r][c] = 'X'
+                embarcacoes_jogador1 -= 1
+                print(f"\nParabéns! Você acertou! Restam {embarcacoes_jogador1} embarcações inimigas.\n")
+            else:
+                tabuleiro_fb_jogador1[r][c] = 'O'
+                print("\nNão houve acerto em nenhuma embarcação inimiga.\n")
+                
+            if embarcacoes_jogador1 == 0:
+                exibir_tabuleiro(tabuleiro_fb_jogador1, "Tabuleiro do Jogador 1", embarcacoes_jogador1)
+                exibir_tabuleiro(tabuleiro_fb_jogador2, "Tabuleiro do Jogador 2", embarcacoes_jogador2)
+                exibir_fim_jogo("Parabéns Jogador 2! Você afundou todas as embarcações do adversário!")
+                break
+                
+            turno_jogador1 = True
+            input("Pressione Enter para passar a vez ao Jogador 1...")
+            limpar_tela()
+
+def jogo_desafio_vs_jogador(linhas, colunas):
+    print("\n--- POSICIONAMENTO JOGADOR 1 ---")
+    tabuleiro_pos_jogador1, status_jogador1 = posicionar_jogador_desafio(linhas, colunas)
+    
+    input("\nPressione Enter e passe o controle para o Jogador 2...")
+    limpar_tela()
+    
+    print("\n--- POSICIONAMENTO JOGADOR 2 ---")
+    tabuleiro_pos_jogador2, status_jogador2 = posicionar_jogador_desafio(linhas, colunas)
+    
+    tabuleiro_fb_jogador1 = criar_tabuleiro(linhas, colunas)
+    tabuleiro_fb_jogador2 = criar_tabuleiro(linhas, colunas)
+    
+    embarcacoes_jogador1 = 5
+    embarcacoes_jogador2 = 5
+    
+    tiros_jogador1 = set()
+    tiros_jogador2 = set()
+    
+    limpar_tela()
+    print("Bem vindo ao Batalha Naval Desafio (Jogador vs Jogador)!")
+    
+    turno_jogador1 = True
+    
+    while True:
+        if turno_jogador1:
+            # Turno do Jogador 1
+            exibir_tabuleiro(tabuleiro_fb_jogador2, "Tabuleiro do Jogador 2", embarcacoes_jogador2)
+            exibir_tabuleiro(tabuleiro_fb_jogador1, "Seu Tabuleiro (Jogador 1)", embarcacoes_jogador1)
+            
+            r, c = pedir_coordenada_tiro_nomeado("Jogador 1", linhas, colunas, tabuleiro_fb_jogador2)
+            tiros_jogador1.add((r, c))
+            
+            navio_atingido = tabuleiro_pos_jogador2[r][c]
+            jogar_novamente = False
+            
+            if navio_atingido != 0:
+                tabuleiro_fb_jogador2[r][c] = 'X'
+                posicoes_navio = status_jogador2[navio_atingido]["posicoes"]
+                nome_navio = status_jogador2[navio_atingido]["nome"]
+                
+                if all(pos in tiros_jogador1 for pos in posicoes_navio):
+                    embarcacoes_jogador2 -= 1
+                    print(f"\nParabéns! Você afundou o {nome_navio}! Restam {embarcacoes_jogador2} embarcações inimigas.")
+                    if embarcacoes_jogador2 > 0:
+                        print("Você ganhou o direito de atacar novamente!\n")
+                        jogar_novamente = True
+                else:
+                    print(f"\nParabéns! Você acertou uma parte do {nome_navio}! Restam {embarcacoes_jogador2} embarcações inimigas.\n")
+            else:
+                tabuleiro_fb_jogador2[r][c] = 'O'
+                print("\nNão houve acerto em nenhuma embarcação inimiga.\n")
+                
+            if embarcacoes_jogador2 == 0:
+                exibir_tabuleiro(tabuleiro_fb_jogador2, "Tabuleiro do Jogador 2", embarcacoes_jogador2)
+                exibir_tabuleiro(tabuleiro_fb_jogador1, "Tabuleiro do Jogador 1", embarcacoes_jogador1)
+                exibir_fim_jogo("Parabéns Jogador 1! Você afundou todas as embarcações do adversário!")
+                break
+                
+            if jogar_novamente:
+                input("Pressione Enter para continuar sua jogada...")
+                limpar_tela()
+                continue
+            else:
+                turno_jogador1 = False
+                input("Pressione Enter para passar a vez ao Jogador 2...")
+                limpar_tela()
+        else:
+            # Turno do Jogador 2
+            exibir_tabuleiro(tabuleiro_fb_jogador1, "Tabuleiro do Jogador 1", embarcacoes_jogador1)
+            exibir_tabuleiro(tabuleiro_fb_jogador2, "Seu Tabuleiro (Jogador 2)", embarcacoes_jogador2)
+            
+            r, c = pedir_coordenada_tiro_nomeado("Jogador 2", linhas, colunas, tabuleiro_fb_jogador1)
+            tiros_jogador2.add((r, c))
+            
+            navio_atingido = tabuleiro_pos_jogador1[r][c]
+            jogar_novamente = False
+            
+            if navio_atingido != 0:
+                tabuleiro_fb_jogador1[r][c] = 'X'
+                posicoes_navio = status_jogador1[navio_atingido]["posicoes"]
+                nome_navio = status_jogador1[navio_atingido]["nome"]
+                
+                if all(pos in tiros_jogador2 for pos in posicoes_navio):
+                    embarcacoes_jogador1 -= 1
+                    print(f"\nParabéns! Você afundou o {nome_navio}! Restam {embarcacoes_jogador1} embarcações inimigas.")
+                    if embarcacoes_jogador1 > 0:
+                        print("Você ganhou o direito de atacar novamente!\n")
+                        jogar_novamente = True
+                else:
+                    print(f"\nParabéns! Você acertou uma parte do {nome_navio}! Restam {embarcacoes_jogador1} embarcações inimigas.\n")
+            else:
+                tabuleiro_fb_jogador1[r][c] = 'O'
+                print("\nNão houve acerto em nenhuma embarcação inimiga.\n")
+                
+            if embarcacoes_jogador1 == 0:
+                exibir_tabuleiro(tabuleiro_fb_jogador1, "Tabuleiro do Jogador 1", embarcacoes_jogador1)
+                exibir_tabuleiro(tabuleiro_fb_jogador2, "Tabuleiro do Jogador 2", embarcacoes_jogador2)
+                exibir_fim_jogo("Parabéns Jogador 2! Você afundou todas as embarcações do adversário!")
+                break
+                
+            if jogar_novamente:
+                input("Pressione Enter para continuar sua jogada...")
+                limpar_tela()
+                continue
+            else:
+                turno_jogador1 = True
+                input("Pressione Enter para passar a vez ao Jogador 1...")
+                limpar_tela()
+
 def menu():
     while True:
         print("\n=== BATALHA NAVAL ===")
         print("1. Jogar Batalha Naval Simplificado (Humano vs Computador)")
         print("2. Jogar Batalha Naval Original - DESAFIO (Humano vs Computador)")
-        print("3. Sair")
+        print("3. Jogar Batalha Naval Simplificado (Jogador vs Jogador)")
+        print("4. Jogar Batalha Naval Original - DESAFIO (Jogador vs Jogador)")
+        print("5. Sair")
         
         opcao = input("Escolha uma modalidade: ").strip()
         
@@ -379,6 +581,14 @@ def menu():
             limpar_tela()
             jogo_desafio(linhas, colunas)
         elif opcao == "3":
+            linhas, colunas = escolher_tamanho_tabuleiro()
+            limpar_tela()
+            jogo_simplificado_vs_jogador(linhas, colunas)
+        elif opcao == "4":
+            linhas, colunas = escolher_tamanho_tabuleiro()
+            limpar_tela()
+            jogo_desafio_vs_jogador(linhas, colunas)
+        elif opcao == "5":
             print("\nEncerrando o jogo.")
             print("Obrigado por jogar!")
             print("Criado por Guilherme Bettio e Gabriel Kulik.")
